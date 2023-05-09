@@ -1,46 +1,77 @@
-CREATE SCHEMA IF NOT EXISTS "instance";
+CREATE SCHEMA IF NOT EXISTS "capitaldashboard";
 
-CREATE  TABLE "mtariderdata"."dim date" ( 
+CREATE  TABLE "capitaldashboard"."dim agency" ( 
+	agencyid             integer  NOT NULL  ,
+	"agency code"        integer    ,
+	"agency name"        varchar(100)    ,
+	CONSTRAINT "pk dim agency" PRIMARY KEY ( agencyid )
+ );
+
+CREATE  TABLE "capitaldashboard"."dim category" ( 
+	categoryid           integer  NOT NULL  ,
+	category             integer    ,
+	"category description" varchar(100)    ,
+	CONSTRAINT "pk dim category" PRIMARY KEY ( categoryid )
+ );
+
+CREATE  TABLE "capitaldashboard"."dim date" ( 
 	iddate               integer  NOT NULL  ,
 	"date"               date    ,
-	datestringformat     varchar(35)    ,
+	datestringformat     varchar(20)    ,
 	"year"               integer    ,
 	"month"              integer    ,
-	"day"                date    ,
+	"day"                integer    ,
+	"load date"          integer    ,
+	"current quarter flag" varchar(10)    ,
+	"current start year" integer    ,
+	"current completion year" integer    ,
+	"current start month" integer    ,
+	"current completion month" integer    ,
+	"design start year"  integer    ,
+	"design completion year" integer    ,
+	"design start month" integer    ,
+	"design completion month" integer    ,
+	"construction start month" integer    ,
+	"construction start year" integer    ,
+	"construction completion month" integer    ,
+	"construction completion year" integer    ,
 	CONSTRAINT "pk dim date" PRIMARY KEY ( iddate )
  );
 
-CREATE  TABLE "mtariderdata"."dim transportationmode" ( 
-	transportationid     integer  NOT NULL  ,
-	subway               integer    ,
-	bus                  integer    ,
-	lirr                 integer    ,
-	"metro-north"        integer    ,
-	"access-a-ride"      integer    ,
-	bridgesandtunnels    integer    ,
-	sir                  integer    ,
-	CONSTRAINT "pk dim transportationmode" PRIMARY KEY ( transportationid )
+CREATE  TABLE "capitaldashboard"."dim element" ( 
+	elementid            integer  NOT NULL  ,
+	element              varchar(20)    ,
+	"element description" varchar(50)    ,
+	CONSTRAINT "pk dim element" PRIMARY KEY ( elementid )
  );
 
-CREATE  TABLE "mtariderdata"."fact mta" ( 
-	factid               bigint  NOT NULL  ,
-	estimatedsubwayridership bigint    ,
-	estimatedbusridership bigint    ,
-	estimatedlirridership bigint    ,
-	estimatedmetronorthridership bigint    ,
-	scheduledaccessaridetrips bigint    ,
-	bridgesandtunnelstraffic bigint    ,
-	estimatedsirridership bigint    ,
-	percentsubwayprepandemic integer    ,
-	percentbusprepandemic integer    ,
-	percentlirrpandemic  integer    ,
-	percentmetronorthprepandemic integer    ,
-	percentaccessarideprepandemic integer    ,
-	percentbridgesandtunnelsprepandemic integer    ,
-	percentsirprepandemic integer    ,
-	"date"               date  NOT NULL  ,
-	transportationid     integer  NOT NULL  ,
-	CONSTRAINT "pk fact mta" PRIMARY KEY ( factid ),
-	CONSTRAINT "fk fact mta dim date" FOREIGN KEY ( "date" ) REFERENCES "instance"."dim date"( iddate )   ,
-	CONSTRAINT "fk fact mta" FOREIGN KEY ( transportationid ) REFERENCES "instance"."dim transportationmode"( transportationid )   
+CREATE  TABLE "capitaldashboard"."dim project" ( 
+	projectid            integer  NOT NULL  ,
+	"project number"     integer    ,
+	project              integer    ,
+	"project description" varchar(100)    ,
+	CONSTRAINT "pk dim project" PRIMARY KEY ( projectid )
+ );
+
+CREATE  TABLE "capitaldashboard"."fact capitaldashboard" ( 
+	id                   integer  NOT NULL  ,
+	"scope objective"    varchar(500)    ,
+	"needs code"         varchar(100)    ,
+	"original budget"    integer    ,
+	"current budget"     integer    ,
+	"original budget vs current budget" integer    ,
+	"percentage complete" integer    ,
+	"location indicator" varchar(15)    ,
+	"overall scope change" varchar(5)    ,
+	agency               integer  NOT NULL  ,
+	category             integer  NOT NULL  ,
+	element              integer  NOT NULL  ,
+	project              integer  NOT NULL  ,
+	"date"               integer  NOT NULL  ,
+	CONSTRAINT pk PRIMARY KEY ( "date" ),
+	CONSTRAINT "fk fact capitaldashboard" FOREIGN KEY ( agency ) REFERENCES "instance"."dim agency"( agencyid )   ,
+	CONSTRAINT "fk fact capitaldashboard category" FOREIGN KEY ( category ) REFERENCES "instance"."dim category"( categoryid )   ,
+	CONSTRAINT "fk fact capitaldashboard date" FOREIGN KEY ( "date" ) REFERENCES "instance"."dim date"( iddate )   ,
+	CONSTRAINT "fk fact capitaldashboard element" FOREIGN KEY ( element ) REFERENCES "instance"."dim element"( elementid )   ,
+	CONSTRAINT "fk fact capitaldashboard project" FOREIGN KEY ( project ) REFERENCES "instance"."dim project"( projectid )   
  );
