@@ -1,0 +1,46 @@
+CREATE SCHEMA IF NOT EXISTS "instance";
+
+CREATE  TABLE "mtariderdata"."dim date" ( 
+	iddate               integer  NOT NULL  ,
+	"date"               date    ,
+	datestringformat     varchar(35)    ,
+	"year"               integer    ,
+	"month"              integer    ,
+	"day"                date    ,
+	CONSTRAINT "pk dim date" PRIMARY KEY ( iddate )
+ );
+
+CREATE  TABLE "mtariderdata"."dim transportationmode" ( 
+	transportationid     integer  NOT NULL  ,
+	subway               integer    ,
+	bus                  integer    ,
+	lirr                 integer    ,
+	"metro-north"        integer    ,
+	"access-a-ride"      integer    ,
+	bridgesandtunnels    integer    ,
+	sir                  integer    ,
+	CONSTRAINT "pk dim transportationmode" PRIMARY KEY ( transportationid )
+ );
+
+CREATE  TABLE "mtariderdata"."fact mta" ( 
+	factid               bigint  NOT NULL  ,
+	estimatedsubwayridership bigint    ,
+	estimatedbusridership bigint    ,
+	estimatedlirridership bigint    ,
+	estimatedmetronorthridership bigint    ,
+	scheduledaccessaridetrips bigint    ,
+	bridgesandtunnelstraffic bigint    ,
+	estimatedsirridership bigint    ,
+	percentsubwayprepandemic integer    ,
+	percentbusprepandemic integer    ,
+	percentlirrpandemic  integer    ,
+	percentmetronorthprepandemic integer    ,
+	percentaccessarideprepandemic integer    ,
+	percentbridgesandtunnelsprepandemic integer    ,
+	percentsirprepandemic integer    ,
+	"date"               date  NOT NULL  ,
+	transportationid     integer  NOT NULL  ,
+	CONSTRAINT "pk fact mta" PRIMARY KEY ( factid ),
+	CONSTRAINT "fk fact mta dim date" FOREIGN KEY ( "date" ) REFERENCES "instance"."dim date"( iddate )   ,
+	CONSTRAINT "fk fact mta" FOREIGN KEY ( transportationid ) REFERENCES "instance"."dim transportationmode"( transportationid )   
+ );
